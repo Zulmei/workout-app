@@ -23,12 +23,12 @@
             <tbody>
                 {% for entry in workout_data %}
                     <tr>
-                        <td>{{ entry[0] }}</td>
-                        <td>{{ entry[1] }}</td>
-                        <td>{{ entry[2] }}</td>
-                        <td>{{ entry[3] }}</td>
-                        <td>{{ entry[4] }}</td>
-                        <td>{{ entry[5] }}</td>
+                        <td>{{ entry['workout_type'] }}</td>
+                        <td>{{ entry['exercise_name'] }}</td>
+                        <td>{{ entry['sets'] }}</td>
+                        <td>{{ entry['reps'] }}</td>
+                        <td>{{ entry['weight'] }}</td>
+                        <td>{{ entry['date'] }}</td>
                     </tr>
                 {% endfor %}
             </tbody>
