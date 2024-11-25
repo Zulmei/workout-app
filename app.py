@@ -15,6 +15,40 @@ def get_db_connection():
     conn.row_factory = sqlite3.Row
     return conn
 
+def init_db():
+    """Initializes the database with required tables if not already created."""
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    # Create users table
+    cursor.execute('''
+    CREATE TABLE IF NOT EXISTS users (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        username TEXT NOT NULL UNIQUE,
+        password TEXT NOT NULL
+    )
+    ''')
+
+    # Create workouts table
+    cursor.execute('''
+    CREATE TABLE IF NOT EXISTS workouts (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        user_id INTEGER NOT NULL,
+        workout_type TEXT NOT NULL,
+        exercise_name TEXT NOT NULL,
+        sets INTEGER NOT NULL,
+        reps INTEGER NOT NULL,
+        weight REAL NOT NULL,
+        date TEXT NOT NULL,
+        FOREIGN KEY (user_id) REFERENCES users (id)
+    )
+    ''')
+
+    conn.commit()
+    conn.close()
+    print("Database initialized successfully.")
+
+
 @app.route('/')
 def home():
     return render_template('home.html')
@@ -171,4 +205,6 @@ def workout_history():
     return render_template('trends.html', workout_data=workout_data)
 
 if __name__ == '__main__':
+    init_db()  # Initialize the database before starting the app
     app.run(debug=True)
+
