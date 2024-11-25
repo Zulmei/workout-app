@@ -3,6 +3,7 @@ import sqlite3
 from datetime import datetime
 from werkzeug.security import generate_password_hash, check_password_hash
 import os
+import calendar
 
 # Initialize Flask app
 app = Flask(__name__)
@@ -203,6 +204,46 @@ def workout_history():
     conn.close()
 
     return render_template('trends.html', workout_data=workout_data)
+
+@app.route('/calendar')
+def workout_calendar():
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+
+    current_month = datetime.now().month
+    current_year = datetime.now().year
+    cal = calendar.Calendar()
+    month_days = list(cal.itermonthdays(current_year, current_month))
+
+    # Group days into weeks
+    weeks = [month_days[i:i+7] for i in range(0, len(month_days), 7)]
+
+    return render_template('calendar.html', calendar=weeks, current_month=datetime.now().strftime('%B'), current_year=current_year)
+
+@app.route('/history/<int:day>')
+def workout_history_day(day):
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+
+    user_id = session['user_id']
+    current_month = datetime.now().month
+    current_year = datetime.now().year
+    date_str = f"{current_year}-{current_month:02d}-{day:02d}"
+
+    conn = get_db_connection()
+    workout_data = conn.execute(
+        '''
+        SELECT workout_type, exercise_name, sets, reps, weight, date 
+        FROM workouts 
+        WHERE user_id = ? AND date(date) = ?
+        ''',
+        (user_id, date_str)
+    ).fetchall()
+    conn.close()
+
+    return render_template('history_day.html', workout_data=workout_data, date=date_str)
+
+
 
 if __name__ == '__main__':
     init_db()  # Initialize the database before starting the app
