@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for, session, flash
 import sqlite3
-from datetime import datetime
+from datetime import datetime, timedelta
 from werkzeug.security import generate_password_hash, check_password_hash
 import os
 import calendar
@@ -231,18 +231,31 @@ def workout_history():
 
 @app.route('/calendar')
 def workout_calendar():
-    if 'user_id' not in session:
-        return redirect(url_for('login'))
-
-    current_month = datetime.now().month
-    current_year = datetime.now().year
-    cal = calendar.Calendar()
-    month_days = list(cal.itermonthdays(current_year, current_month))
-
-    # Group days into weeks
-    weeks = [month_days[i:i+7] for i in range(0, len(month_days), 7)]
-
-    return render_template('calendar.html', calendar=weeks, current_month=datetime.now().strftime('%B'), current_year=current_year)
+    year = int(request.args.get('year', datetime.now().year))
+    month = int(request.args.get('month', datetime.now().month))
+    
+    # Previous and next months
+    prev_month = month - 1 if month > 1 else 12
+    next_month = month + 1 if month < 12 else 1
+    prev_year = year if month > 1 else year - 1
+    next_year = year if month < 12 else year + 1
+    
+    # Generate the calendar
+    from calendar import Calendar
+    cal = Calendar()
+    calendar = list(cal.monthdayscalendar(year, month))
+    
+    # Render the template
+    return render_template(
+        'calendar.html', 
+        calendar=calendar, 
+        current_month=month, 
+        current_year=year,
+        prev_month=prev_month,
+        next_month=next_month,
+        prev_year=prev_year,
+        next_year=next_year
+    )
 
 @app.route('/history/<int:day>')
 def workout_history_day(day):

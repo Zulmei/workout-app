@@ -10,11 +10,28 @@
             // Redirect to the day-specific workout history page
             window.location.href = "/history/" + day;
         }
+
+        function navigateCalendar(year, month) {
+            // Redirect to the calendar page with updated year and month
+            window.location.href = `/calendar?year=${year}&month=${month}`;
+        }
     </script>
 </head>
 <body class="bg-light">
     <div class="container mt-5">
         <h1 class="text-center mb-4">Workout Calendar - {{ current_month }} {{ current_year }}</h1>
+        <div class="text-center mb-3">
+            <!-- Navigation Arrows -->
+            <button class="btn btn-outline-secondary" 
+                    onclick="navigateCalendar('{{ prev_year }}', '{{ prev_month }}');">
+                &larr; Previous
+            </button>
+            <button class="btn btn-outline-secondary" 
+                    onclick="navigateCalendar('{{ next_year }}', '{{ next_month }}');">
+                Next &rarr;
+            </button>
+        </div>        
+              
         <div class="calendar">
             <table class="table table-bordered">
                 <thead>
