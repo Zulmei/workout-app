@@ -141,26 +141,40 @@ def workout_form(workout_type):
     if 'user_id' not in session:
         return redirect(url_for('login'))
 
+    # Define the updated workout program
     workout_program = {
         "Pull": [
-            {"name": "Pull-ups", "sets": 3},
-            {"name": "Barbell Rows", "sets": 3},
-            {"name": "Lat Pulldowns", "sets": 3}
+            {"name": "Deadlift", "sets": 1, "reps": "5+"},
+            {"name": "Pulldowns", "sets": 3, "reps": "8-12"},
+            {"name": "Chest Supported Rows", "sets": 3, "reps": "8-12"},
+            {"name": "Face Pulls", "sets": 5, "reps": "15-20"},
+            {"name": "Hammer Curls", "sets": 4, "reps": "8-12"},
+            {"name": "Dumbbell Curls", "sets": 4, "reps": "8-12"},
         ],
         "Push": [
-            {"name": "Bench Press", "sets": 3},
-            {"name": "Overhead Press", "sets": 3},
-            {"name": "Dips", "sets": 3}
+            {"name": "Bench Press", "sets": 5, "reps": "5"},
+            {"name": "Overhead Press", "sets": 3, "reps": "8-12"},
+            {"name": "Incline Dumbbell Press", "sets": 3, "reps": "8-12"},
+            {"name": "Triceps Pushdowns", "sets": 3, "reps": "8-12"},
+            {"name": "Lat Raises", "sets": 3, "reps": "15-20"},
+            {"name": "Overhead Tri Extensions", "sets": 3, "reps": "8-12"},
+            {"name": "Lat Raises", "sets": 3, "reps": "15-20"},
         ],
         "Legs": [
-            {"name": "Squats", "sets": 3},
-            {"name": "Deadlifts", "sets": 3},
-            {"name": "Lunges", "sets": 3}
+            {"name": "Squats", "sets": 3, "reps": "5"},
+            {"name": "Romanian Deadlift", "sets": 3, "reps": "8-12"},
+            {"name": "Leg Press", "sets": 3, "reps": "8-12"},
+            {"name": "Leg Curls", "sets": 3, "reps": "8-12"},
+            {"name": "Calf Raises", "sets": 5, "reps": "8-12"},
         ]
     }
 
+    # Get exercises for the selected workout type
     exercises = workout_program.get(workout_type, [])
+
+    # Pass the selected workout type and exercises to the form
     return render_template('workout_form.html', workout_type=workout_type, exercises=exercises)
+
 
 @app.route('/submit', methods=['POST'])
 def submit_workout():
