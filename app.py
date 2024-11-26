@@ -231,31 +231,41 @@ def workout_history():
 
 @app.route('/calendar')
 def workout_calendar():
-    year = int(request.args.get('year', datetime.now().year))
-    month = int(request.args.get('month', datetime.now().month))
-    
-    # Previous and next months
-    prev_month = month - 1 if month > 1 else 12
-    next_month = month + 1 if month < 12 else 1
-    prev_year = year if month > 1 else year - 1
-    next_year = year if month < 12 else year + 1
-    
-    # Generate the calendar
-    from calendar import Calendar
-    cal = Calendar()
-    calendar = list(cal.monthdayscalendar(year, month))
-    
-    # Render the template
+    try:
+        # Use defaults if parameters are missing or invalid
+        year = int(request.args.get('year', datetime.now().year))
+        month = int(request.args.get('month', datetime.now().month))
+    except (ValueError, TypeError):
+        year = datetime.now().year
+        month = datetime.now().month
+
+    # Ensure month is within valid range
+    if month < 1:
+        month = 12
+        year -= 1
+    elif month > 12:
+        month = 1
+        year += 1
+
+    # Convert the month number to the full name
+    import calendar
+    month_name = calendar.month_name[month]
+
+    # Generate the calendar for the given month, properly aligned
+    cal = calendar.Calendar(firstweekday=6)  # Sunday as the first day of the week
+    calendar_data = cal.monthdayscalendar(year, month)
+
     return render_template(
-        'calendar.html', 
-        calendar=calendar, 
-        current_month=month, 
+        'calendar.html',
+        calendar=calendar_data,   # Aligned calendar data
+        current_month=month_name,  # Full month name
         current_year=year,
-        prev_month=prev_month,
-        next_month=next_month,
-        prev_year=prev_year,
-        next_year=next_year
+        prev_month=month - 1 if month > 1 else 12,
+        prev_year=year if month > 1 else year - 1,
+        next_month=month + 1 if month < 12 else 1,
+        next_year=year if month < 12 else year + 1,
     )
+
 
 @app.route('/history/<int:day>')
 def workout_history_day(day):
