@@ -109,22 +109,32 @@ def index():
     
     workout_program = {
         "Pull": [
-            {"name": "Pull-ups", "sets": 3},
-            {"name": "Barbell Rows", "sets": 3},
-            {"name": "Lat Pulldowns", "sets": 3}
+            {"name": "Deadlift", "sets": 1, "reps": "5+"},
+            {"name": "Pulldowns", "sets": 3, "reps": "8-12"},
+            {"name": "Chest Supported Rows", "sets": 3, "reps": "8-12"},
+            {"name": "Face Pulls", "sets": 5, "reps": "15-20"},
+            {"name": "Hammer Curls", "sets": 4, "reps": "8-12"},
+            {"name": "Dumbbell Curls", "sets": 4, "reps": "8-12"},
         ],
         "Push": [
-            {"name": "Bench Press", "sets": 3},
-            {"name": "Overhead Press", "sets": 3},
-            {"name": "Dips", "sets": 3}
+            {"name": "Bench Press", "sets": 5, "reps": "5"},
+            {"name": "Overhead Press", "sets": 3, "reps": "8-12"},
+            {"name": "Incline Dumbbell Press", "sets": 3, "reps": "8-12"},
+            {"name": "Triceps Pushdowns", "sets": 3, "reps": "8-12"},
+            {"name": "Lat Raises", "sets": 3, "reps": "15-20"},
+            {"name": "Overhead Tri Extensions", "sets": 3, "reps": "8-12"},
+            {"name": "Lat Raises", "sets": 3, "reps": "15-20"},
         ],
         "Legs": [
-            {"name": "Squats", "sets": 3},
-            {"name": "Deadlifts", "sets": 3},
-            {"name": "Lunges", "sets": 3}
+            {"name": "Squats", "sets": 3, "reps": "5"},
+            {"name": "Romanian Deadlift", "sets": 3, "reps": "8-12"},
+            {"name": "Leg Press", "sets": 3, "reps": "8-12"},
+            {"name": "Leg Curls", "sets": 3, "reps": "8-12"},
+            {"name": "Calf Raises", "sets": 5, "reps": "8-12"},
         ]
     }
     return render_template('index.html', workout_program=workout_program)
+
 
 @app.route('/workout_form/<workout_type>', methods=['GET', 'POST'])
 def workout_form(workout_type):

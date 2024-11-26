@@ -16,30 +16,31 @@
             <!-- Dynamically Render Exercises and Sets -->
             {% for exercise in exercises %}
                 <div class="mb-5">
-                    <h4>{{ exercise.name }} - {{ exercise.sets }} Sets</h4>
+                    <h4>{{ exercise.name }} - {{ exercise.sets }} Sets ({{ exercise.reps }} Reps)</h4>
                     {% for set_number in range(1, exercise.sets + 1) %}
                         <div class="row mb-3">
                             <div class="col-md-6">
                                 <label for="{{ exercise.name }}_set_{{ set_number }}_reps" class="form-label">Set {{ set_number }} Reps:</label>
                                 <input type="number" 
-                                       name="{{ exercise.name }}_set_{{ set_number }}_reps" 
-                                       id="{{ exercise.name }}_set_{{ set_number }}_reps" 
-                                       class="form-control" 
-                                       required>
+                                    name="{{ exercise.name }}_set_{{ set_number }}_reps" 
+                                    id="{{ exercise.name }}_set_{{ set_number }}_reps" 
+                                    class="form-control" 
+                                    required>
                             </div>
                             <div class="col-md-6">
                                 <label for="{{ exercise.name }}_set_{{ set_number }}_weight" class="form-label">Set {{ set_number }} Weight (lbs):</label>
                                 <input type="number" 
-                                       name="{{ exercise.name }}_set_{{ set_number }}_weight" 
-                                       id="{{ exercise.name }}_set_{{ set_number }}_weight" 
-                                       class="form-control" 
-                                       step="0.1" 
-                                       required>
+                                    name="{{ exercise.name }}_set_{{ set_number }}_weight" 
+                                    id="{{ exercise.name }}_set_{{ set_number }}_weight" 
+                                    class="form-control" 
+                                    step="0.1" 
+                                    required>
                             </div>
                         </div>
                     {% endfor %}
                 </div>
             {% endfor %}
+
 
             <!-- Submit and Cancel Buttons -->
             <div class="text-center">
