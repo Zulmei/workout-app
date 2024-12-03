@@ -14,7 +14,12 @@
         }
         .image-section {
             flex: 1;
-            background: url("{{ url_for('static', filename='images/bicep-curl-home.jpg') }}") no-repeat center center;
+            position: relative;
+            overflow: hidden;
+            height: 100vh;
+            background-image: linear-gradient(rgba(50, 50, 50, 0.5), rgba(50, 50, 50, 0.5)), url("{{ url_for('static', filename='images/bicep-curl-home.jpg') }}");
+            background-repeat: no-repeat;
+            background-position: center;
             background-size: cover;
         }
         .form-section {
@@ -23,34 +28,38 @@
             display: flex;
             flex-direction: column;
             justify-content: center;
+            background: rgba(50, 50, 50, 0.1);
+            height: 100vh;
         }
     </style>
 </head>
 <body class="bg-light">
     <div class="container-fluid welcome-container" style="padding: 0;">
         <!-- Left side: Image section -->
-        <div class="image-section" style="overflow: hidden; height: 100%; width: 100%;">
-            <img src="{{ url_for('static', filename='images/bicep-curl-home.jpg') }}" alt="Bicep Curl Image" style="width: 100%; height: 100vh; object-fit: cover;">
+        <div class="image-section">
+            <div class="hero-text" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: white; text-align: center;">
+                <h1 style="font-size: 3rem; font-weight: bold; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);">Your Fitness Journey Starts Today</h1>
+            </div>
         </div>
         
         <!-- Right side: Login/Register Section -->
         <div class="form-section">
             <h1 class="text-center mb-4">Welcome to Workout Tracker</h1>
-            <div class="card shadow" style="width: 100%; max-width: 350px; margin: 0 auto; height: 500px; display: flex; flex-direction: column; justify-content: space-between;">
+            <div class="card shadow" style="width: 100%; max-width: 350px; margin: auto; height: 500px;">
                 <div class="card-body">
                     <h1 class="card-title text-center mb-4">Log In</h1>
-            <form method="POST" action="{{ url_for('login') }}">
-                <div class="mb-3">
-                    <label for="username" class="form-label">Username</label>
-                    <input type="text" class="form-control" id="username" name="username" required>
-                </div>
-                <div class="mb-3">
-                    <label for="password" class="form-label">Password</label>
-                    <input type="password" class="form-control" id="password" name="password" required>
-                </div>
-                <button type="submit" class="btn btn-primary w-100 mb-3">Login</button>
-                </form>
-                <a href="{{ url_for('register') }}" class="btn btn-secondary w-100 mb-3">Register</a>
+                    <form method="POST" action="{{ url_for('login') }}">
+                        <div class="mb-3">
+                            <label for="username" class="form-label">Username</label>
+                            <input type="text" class="form-control" id="username" name="username" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Password</label>
+                            <input type="password" class="form-control" id="password" name="password" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100 mb-3">Login</button>
+                    </form>
+                    <a href="{{ url_for('register') }}" class="btn btn-secondary w-100 mb-3">Register</a>
                 </div>
             </div>
         </div>
