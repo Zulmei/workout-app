@@ -247,8 +247,7 @@ def workout_calendar():
         month = 1
         year += 1
 
-    # Convert the month number to the full name
-    import calendar
+    # Use both month name and numeric value
     month_name = calendar.month_name[month]
 
     # Generate the calendar for the given month, properly aligned
@@ -258,7 +257,8 @@ def workout_calendar():
     return render_template(
         'calendar.html',
         calendar=calendar_data,   # Aligned calendar data
-        current_month=month_name,  # Full month name
+        current_month=month_name,  # Full month name for display
+        current_month_number=month,  # Numeric month value for URL generation
         current_year=year,
         prev_month=month - 1 if month > 1 else 12,
         prev_year=year if month > 1 else year - 1,
@@ -267,15 +267,13 @@ def workout_calendar():
     )
 
 
-@app.route('/history/<int:day>')
-def workout_history_day(day):
+@app.route('/history/<int:year>/<int:month>/<int:day>')
+def workout_history_day(year, month, day):
     if 'user_id' not in session:
         return redirect(url_for('login'))
 
     user_id = session['user_id']
-    current_month = datetime.now().month
-    current_year = datetime.now().year
-    date_str = f"{current_year}-{current_month:02d}-{day:02d}"
+    date_str = f"{year}-{month:02d}-{day:02d}"
 
     conn = get_db_connection()
     workout_data = conn.execute(
