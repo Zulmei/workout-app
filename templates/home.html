@@ -35,9 +35,10 @@
         
         <!-- Right side: Login/Register Section -->
         <div class="form-section">
-            <div class="card shadow" style="width: 100%; max-width: 400px; margin: 0 auto;">
+            <h1 class="text-center mb-4">Welcome to Workout Tracker</h1>
+            <div class="card shadow" style="width: 100%; max-width: 350px; margin: 0 auto; height: 500px; display: flex; flex-direction: column; justify-content: space-between;">
                 <div class="card-body">
-                    <h1 class="card-title text-center mb-4">Welcome to Workout Tracker</h1>
+                    <h1 class="card-title text-center mb-4">Log In</h1>
             <form method="POST" action="{{ url_for('login') }}">
                 <div class="mb-3">
                     <label for="username" class="form-label">Username</label>
@@ -48,11 +49,9 @@
                     <input type="password" class="form-control" id="password" name="password" required>
                 </div>
                 <button type="submit" class="btn btn-primary w-100 mb-3">Login</button>
-            </form>
+                </form>
+                <a href="{{ url_for('register') }}" class="btn btn-secondary w-100 mb-3">Register</a>
                 </div>
-            </div>
-            <div class="text-center mt-3">
-                <a href="{{ url_for('register') }}" class="btn btn-secondary btn-lg">Register</a>
             </div>
         </div>
     </div>
