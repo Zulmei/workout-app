@@ -21,7 +21,7 @@
         .welcome-message {
     font-size: 4.5rem;
     font-weight: bolder;
-    color: #000;
+    color: #000000;
     margin-top: -12rem;
     margin-bottom: 1rem;
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
@@ -43,20 +43,20 @@
         }
     </style>
 </head>
-<body class="bg-light">
+<body style="background-color: #CDD2FF;">
     <!-- Home Container with Welcome Message and Image -->
     <div class="container-fluid home-container">
         <!-- Left side: Welcome Message and Buttons -->
         <div class="welcome-container">
-            <div class="welcome-message">Welcome To<br>Workout Tracker</div>
+            <div class="welcome-message">Log as you Lift<br>Track your Progress</div>
             <div class="buttons-container">
-                <a href="{{ url_for('login') }}" class="btn btn-primary me-2">Login</a>
-                <a href="{{ url_for('register') }}" class="btn btn-secondary">Register</a>
+                <a href="{{ url_for('login') }}" class="btn btn-primary btn-lg me-2">Login</a>
+                <a href="{{ url_for('register') }}" class="btn btn-secondary btn-lg">Register</a>
             </div>
         </div>
 
         <!-- Right side: Image Holder -->
-        <div class="image-holder">
+        <div class="image-holder" style="border: 20px solid #FFFFFF; border-radius: 20px;">
             <img src="{{ url_for('static', filename='images/home-screen-screenshot.png') }}" alt="Home Screen Screenshot" class="img-fluid">
         </div>
     </div>
@@ -65,33 +65,33 @@
     <div class="container cards-section">
         <div class="row">
             <div class="col-md-3">
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title" style="color: #000; font-weight: bold; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;">Log As You Lift</h5>
-                        <p class="card-text" style="color: #000; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;">Users can use the website to log their workout in real time as they are working out in the gym. Track your sets, reps, and weights effortlessly to stay on top of your fitness journey.</p>
+                <div class="card" style="border: 3px solid #FFFFFF; border-radius: 20px;">
+                    <div class="card-body" style="background-color: #FFFACD; border-radius: 20px; overflow: hidden;">
+                        <h5 class="card-title" style="color: #000000;">Log As You Lift</h5>
+                        <p class="card-text" style="color: #000000;">Users can use the website to log their workout in real time as they are working out in the gym. Track your sets, reps, and weights effortlessly to stay on top of your fitness journey.</p>
                     </div>
                 </div>
             </div>
             <div class="col-md-3">
-                <div class="card">
-                    <div class="card-body">
+                <div class="card" style="border: 3px solid #FFFFFF; border-radius: 20px;">
+                    <div class="card-body" style="background-color: #FFFACD; border-radius: 20px; overflow: hidden;">
                         <h5 class="card-title" style="color: #000;">Track Your Progress</h5>
                         <p class="card-text" style="color: #000;">Users can utilize the workout history and calendar features to track their progress over time. See how far you've come, identify trends, and stay motivated by visualizing your fitness journey.</p>
                     </div>
                 </div>
             </div>
             <div class="col-md-3">
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title">Choose Your Workout Plan</h5>
+                <div class="card" style="border: 3px solid #FFFFFF; border-radius: 20px;">
+<div class="card-body" style="background-color: #FFFACD; border-radius: 20px; overflow: hidden;">
+<h5 class="card-title">Choose Your Workout Plan</h5>
                         <p class="card-text">Users can choose from a library of different workout plans that are already made for them and their goals. Whether you're looking to build muscle, increase endurance, or maintain a healthy lifestyle, there's a plan tailored for you.</p>
                     </div>
                 </div>
             </div>
             <div class="col-md-3">
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title">Create Your Own Plan</h5>
+                <div class="card" style="border: 3px solid #FFFFFF; border-radius: 20px;">
+<div class="card-body" style="background-color: #FFFACD; border-radius: 20px; overflow: hidden;">
+<h5 class="card-title">Create Your Own Plan</h5>
                         <p class="card-text">Users can create their own workout plans to suit their unique fitness needs. Customize exercises, reps, and sets to build a plan that helps you achieve your personal fitness goals.</p>
                     </div>
                 </div>
