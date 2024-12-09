@@ -219,6 +219,7 @@ def workout_history():
         SELECT workout_type, exercise_name, sets, reps, weight, date 
         FROM workouts 
         WHERE user_id = ?
+        ORDER BY date DESC
         ''',
         (user_id,)
     ).fetchall()
