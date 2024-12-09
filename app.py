@@ -288,6 +288,47 @@ def workout_history_day(year, month, day):
 
     return render_template('history_day.html', workout_data=workout_data, date=date_str)
 
+@app.route('/split/<split_type>')
+def split_page(split_type):
+    # Logic to load the appropriate page for the split type
+    if split_type == 'pull_push_legs':
+        return render_template('pull_push_legs.html', split_type='Pull/Push/Legs')
+    elif split_type == 'upper_lower':
+        return render_template('upper_lower.html', split_type='Upper/Lower')
+    else:
+        return "Invalid split type", 404
+
+@app.route('/pull_push_legs')
+def pull_push_legs():
+    workout_program = {
+        "Pull": [
+            {"name": "Deadlift", "sets": 1, "reps": "5+"},
+            {"name": "Pulldowns", "sets": 3, "reps": "8-12"},
+            {"name": "Chest Supported Rows", "sets": 3, "reps": "8-12"},
+            {"name": "Face Pulls", "sets": 5, "reps": "15-20"},
+            {"name": "Hammer Curls", "sets": 4, "reps": "8-12"},
+            {"name": "Dumbbell Curls", "sets": 4, "reps": "8-12"},
+        ],
+        "Push": [
+            {"name": "Bench Press", "sets": 5, "reps": "5"},
+            {"name": "Overhead Press", "sets": 3, "reps": "8-12"},
+            {"name": "Incline Dumbbell Press", "sets": 3, "reps": "8-12"},
+            {"name": "Triceps Pushdowns", "sets": 3, "reps": "8-12"},
+            {"name": "Lat Raises", "sets": 3, "reps": "15-20"},
+            {"name": "Overhead Tri Extensions", "sets": 3, "reps": "8-12"},
+            {"name": "Lat Raises", "sets": 3, "reps": "15-20"},
+        ],
+        "Legs": [
+            {"name": "Squats", "sets": 3, "reps": "5"},
+            {"name": "Romanian Deadlift", "sets": 3, "reps": "8-12"},
+            {"name": "Leg Press", "sets": 3, "reps": "8-12"},
+            {"name": "Leg Curls", "sets": 3, "reps": "8-12"},
+            {"name": "Calf Raises", "sets": 5, "reps": "8-12"},
+        ]
+    }
+    return render_template('pull_push_legs.html', workout_program=workout_program)
+
+
 
 
 if __name__ == '__main__':
