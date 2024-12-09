@@ -6,10 +6,10 @@
     <title>{{ workout_type }} Workout</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
-<body class="bg-light">
+<body style="background-color: #CDD2FF;">
     <div class="container mt-5">
         <h1 class="text-center mb-4">{{ workout_type }} Workout</h1>
-        <form action="{{ url_for('submit_workout') }}" method="POST" class="shadow p-4 bg-white rounded">
+        <form action="{{ url_for('submit_workout') }}" method="POST" class="shadow p-4 rounded" style="background-color: #FFFACD;">
             <!-- Hidden Input for Workout Type -->
             <input type="hidden" name="workout_type" value="{{ workout_type }}">
 
@@ -24,7 +24,7 @@
                                 <input type="number" 
                                     name="{{ exercise.name }}_set_{{ set_number }}_reps" 
                                     id="{{ exercise.name }}_set_{{ set_number }}_reps" 
-                                    class="form-control" 
+                                    class="form-control" style="background-color: white;"   
                                     required>
                             </div>
                             <div class="col-md-6">
@@ -32,7 +32,7 @@
                                 <input type="number" 
                                     name="{{ exercise.name }}_set_{{ set_number }}_weight" 
                                     id="{{ exercise.name }}_set_{{ set_number }}_weight" 
-                                    class="form-control" 
+                                    class="form-control"
                                     step="0.1" 
                                     required>
                             </div>
