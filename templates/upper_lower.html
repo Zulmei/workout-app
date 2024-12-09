@@ -12,40 +12,27 @@
 
         <!-- Display workout options -->
         <div class="row">
-            <div class="col-md-6 mb-4">
-                <div class="card" style="background-color: #CDD2FF;">
-                    <div class="card-header text-center" style="background-color: #CDD2FF;">
-                        <h5>Upper Body</h5>
-                    </div>
-                    <div class="card-body" style="background-color: #E6E6FA;">
-                        <ul class="list-group">
-                            <li class="list-group-item" style="background-color: #E6E6FA;">
-                                Chest, Back, Shoulders, Arms Exercises
-                            </li>
-                        </ul>
-                    </div>
-                    <div class="card-footer text-center" style="background-color: #CDD2FF;">
-                        <a href="{{ url_for('workout_form', workout_type='Upper Body') }}" class="btn btn-primary">Start Upper Workout</a>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-6 mb-4">
-                <div class="card" style="background-color: #CDD2FF;">
-                    <div class="card-header text-center" style="background-color: #CDD2FF;">
-                        <h5>Lower Body</h5>
-                    </div>
-                    <div class="card-body" style="background-color: #E6E6FA;">
-                        <ul class="list-group">
-                            <li class="list-group-item" style="background-color: #E6E6FA;">
-                                Legs, Glutes, Core Exercises
-                            </li>
-                        </ul>
-                    </div>
-                    <div class="card-footer text-center" style="background-color: #CDD2FF;">
-                        <a href="{{ url_for('workout_form', workout_type='Lower Body') }}" class="btn btn-success">Start Lower Workout</a>
+            {% for workout_type, exercises in workout_program.items() %}
+                <div class="col-md-6 mb-4">
+                    <div class="card" style="background-color: #CDD2FF;">
+                        <div class="card-header text-center" style="background-color: #CDD2FF;">
+                            <h5>{{ workout_type }}</h5>
+                        </div>
+                        <div class="card-body" style="background-color: #E6E6FA;">
+                            <ul class="list-group">
+                                {% for exercise in exercises %}
+                                    <li class="list-group-item" style="background-color: #E6E6FA;">
+                                        {{ exercise.name }} ({{ exercise.sets }} sets)
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                        <div class="card-footer text-center" style="background-color: #CDD2FF;">
+                            <a href="{{ url_for('workout_form', workout_type=workout_type) }}" class="btn btn-primary">Start {{ workout_type }}</a>
+                        </div>
                     </div>
                 </div>
-            </div>
+            {% endfor %}
         </div>
 
         <!-- Back Button -->
