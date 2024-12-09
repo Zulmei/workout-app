@@ -158,12 +158,18 @@ def index():
 def workout_form(workout_type):
     if 'user_id' not in session:
         return redirect(url_for('login'))
-    
-    # Get exercises for the selected workout type
-    workout_program = get_workout_program("pull_push_legs")
+
+    # Determine which program type the workout_type belongs to
+    workout_program = {}
+    if workout_type in get_workout_program("pull_push_legs"):
+        workout_program = get_workout_program("pull_push_legs")
+    elif workout_type in get_workout_program("upper_lower"):
+        workout_program = get_workout_program("upper_lower")
+
+    # Fetch the exercises for the specific workout type
     exercises = workout_program.get(workout_type, [])
 
-    # Pass the selected workout type and exercises to the form
+    # Render the workout_form.html template
     return render_template('workout_form.html', workout_type=workout_type, exercises=exercises)
 
 
@@ -306,4 +312,3 @@ def upper_lower():
 if __name__ == '__main__':
     init_db()  # Initialize the database before starting the app
     app.run(debug=True)
-
