@@ -9,6 +9,51 @@ import calendar
 app = Flask(__name__, static_folder='static', static_url_path='/static')
 app.secret_key = 'your_secret_key'
 
+# Centralized workout program data
+def get_workout_program(program_type=None):
+    programs = {
+        "pull_push_legs": {
+            "Pull": [
+                {"name": "Deadlift", "sets": 1, "reps": "5+"},
+                {"name": "Pulldowns", "sets": 3, "reps": "8-12"},
+                {"name": "Chest Supported Rows", "sets": 3, "reps": "8-12"},
+                {"name": "Face Pulls", "sets": 5, "reps": "15-20"},
+                {"name": "Hammer Curls", "sets": 4, "reps": "8-12"},
+                {"name": "Dumbbell Curls", "sets": 4, "reps": "8-12"},
+            ],
+            "Push": [
+                {"name": "Bench Press", "sets": 5, "reps": "5"},
+                {"name": "Overhead Press", "sets": 3, "reps": "8-12"},
+                {"name": "Incline Dumbbell Press", "sets": 3, "reps": "8-12"},
+                {"name": "Triceps Pushdowns", "sets": 3, "reps": "8-12"},
+                {"name": "Lat Raises", "sets": 3, "reps": "15-20"},
+                {"name": "Overhead Tri Extensions", "sets": 3, "reps": "8-12"},
+            ],
+            "Legs": [
+                {"name": "Squats", "sets": 3, "reps": "5"},
+                {"name": "Romanian Deadlift", "sets": 3, "reps": "8-12"},
+                {"name": "Leg Press", "sets": 3, "reps": "8-12"},
+                {"name": "Leg Curls", "sets": 3, "reps": "8-12"},
+                {"name": "Calf Raises", "sets": 5, "reps": "8-12"},
+            ],
+        },
+        "upper_lower": {
+            "Upper Body": [
+                {"name": "Bench Press", "sets": 4, "reps": "6-8"},
+                {"name": "Row", "sets": 4, "reps": "6-8"},
+                {"name": "Incline Dumbbell Press", "sets": 3, "reps": "10-12"},
+                {"name": "Pulldowns", "sets": 3, "reps": "10-12"},
+            ],
+            "Lower Body": [
+                {"name": "Squats", "sets": 4, "reps": "6-8"},
+                {"name": "Deadlifts", "sets": 3, "reps": "6-8"},
+                {"name": "Lunges", "sets": 3, "reps": "10-12"},
+                {"name": "Leg Curls", "sets": 3, "reps": "10-12"},
+            ],
+        },
+    }
+    return programs.get(program_type, {})
+
 # Database connection function
 def get_db_connection():
     db_path = os.path.join(os.path.dirname(__file__), 'workout.db')
@@ -106,70 +151,16 @@ def logout():
 def index():
     if 'user_id' not in session:
         return redirect(url_for('login'))
-    
-    workout_program = {
-        "Pull": [
-            {"name": "Deadlift", "sets": 1, "reps": "5+"},
-            {"name": "Pulldowns", "sets": 3, "reps": "8-12"},
-            {"name": "Chest Supported Rows", "sets": 3, "reps": "8-12"},
-            {"name": "Face Pulls", "sets": 5, "reps": "15-20"},
-            {"name": "Hammer Curls", "sets": 4, "reps": "8-12"},
-            {"name": "Dumbbell Curls", "sets": 4, "reps": "8-12"},
-        ],
-        "Push": [
-            {"name": "Bench Press", "sets": 5, "reps": "5"},
-            {"name": "Overhead Press", "sets": 3, "reps": "8-12"},
-            {"name": "Incline Dumbbell Press", "sets": 3, "reps": "8-12"},
-            {"name": "Triceps Pushdowns", "sets": 3, "reps": "8-12"},
-            {"name": "Lat Raises", "sets": 3, "reps": "15-20"},
-            {"name": "Overhead Tri Extensions", "sets": 3, "reps": "8-12"},
-            {"name": "Lat Raises", "sets": 3, "reps": "15-20"},
-        ],
-        "Legs": [
-            {"name": "Squats", "sets": 3, "reps": "5"},
-            {"name": "Romanian Deadlift", "sets": 3, "reps": "8-12"},
-            {"name": "Leg Press", "sets": 3, "reps": "8-12"},
-            {"name": "Leg Curls", "sets": 3, "reps": "8-12"},
-            {"name": "Calf Raises", "sets": 5, "reps": "8-12"},
-        ]
-    }
-    return render_template('index.html', workout_program=workout_program)
+    return render_template('index.html')
 
 
 @app.route('/workout_form/<workout_type>', methods=['GET', 'POST'])
 def workout_form(workout_type):
     if 'user_id' not in session:
         return redirect(url_for('login'))
-
-    # Define the updated workout program
-    workout_program = {
-        "Pull": [
-            {"name": "Deadlift", "sets": 1, "reps": "5+"},
-            {"name": "Pulldowns", "sets": 3, "reps": "8-12"},
-            {"name": "Chest Supported Rows", "sets": 3, "reps": "8-12"},
-            {"name": "Face Pulls", "sets": 5, "reps": "15-20"},
-            {"name": "Hammer Curls", "sets": 4, "reps": "8-12"},
-            {"name": "Dumbbell Curls", "sets": 4, "reps": "8-12"},
-        ],
-        "Push": [
-            {"name": "Bench Press", "sets": 5, "reps": "5"},
-            {"name": "Overhead Press", "sets": 3, "reps": "8-12"},
-            {"name": "Incline Dumbbell Press", "sets": 3, "reps": "8-12"},
-            {"name": "Triceps Pushdowns", "sets": 3, "reps": "8-12"},
-            {"name": "Lat Raises", "sets": 3, "reps": "15-20"},
-            {"name": "Overhead Tri Extensions", "sets": 3, "reps": "8-12"},
-            {"name": "Lat Raises", "sets": 3, "reps": "15-20"},
-        ],
-        "Legs": [
-            {"name": "Squats", "sets": 3, "reps": "5"},
-            {"name": "Romanian Deadlift", "sets": 3, "reps": "8-12"},
-            {"name": "Leg Press", "sets": 3, "reps": "8-12"},
-            {"name": "Leg Curls", "sets": 3, "reps": "8-12"},
-            {"name": "Calf Raises", "sets": 5, "reps": "8-12"},
-        ]
-    }
-
+    
     # Get exercises for the selected workout type
+    workout_program = get_workout_program("pull_push_legs")
     exercises = workout_program.get(workout_type, [])
 
     # Pass the selected workout type and exercises to the form
@@ -294,43 +285,20 @@ def split_page(split_type):
     if split_type == 'pull_push_legs':
         return render_template('pull_push_legs.html', split_type='Pull/Push/Legs')
     elif split_type == 'upper_lower':
-        return render_template('upper_lower.html', split_type='Upper/Lower')
+        workout_program = get_workout_program("upper_lower")
+        return render_template('upper_lower.html', workout_program=workout_program)
     else:
         return "Invalid split type", 404
 
 @app.route('/pull_push_legs')
 def pull_push_legs():
-    workout_program = {
-        "Pull": [
-            {"name": "Deadlift", "sets": 1, "reps": "5+"},
-            {"name": "Pulldowns", "sets": 3, "reps": "8-12"},
-            {"name": "Chest Supported Rows", "sets": 3, "reps": "8-12"},
-            {"name": "Face Pulls", "sets": 5, "reps": "15-20"},
-            {"name": "Hammer Curls", "sets": 4, "reps": "8-12"},
-            {"name": "Dumbbell Curls", "sets": 4, "reps": "8-12"},
-        ],
-        "Push": [
-            {"name": "Bench Press", "sets": 5, "reps": "5"},
-            {"name": "Overhead Press", "sets": 3, "reps": "8-12"},
-            {"name": "Incline Dumbbell Press", "sets": 3, "reps": "8-12"},
-            {"name": "Triceps Pushdowns", "sets": 3, "reps": "8-12"},
-            {"name": "Lat Raises", "sets": 3, "reps": "15-20"},
-            {"name": "Overhead Tri Extensions", "sets": 3, "reps": "8-12"},
-            {"name": "Lat Raises", "sets": 3, "reps": "15-20"},
-        ],
-        "Legs": [
-            {"name": "Squats", "sets": 3, "reps": "5"},
-            {"name": "Romanian Deadlift", "sets": 3, "reps": "8-12"},
-            {"name": "Leg Press", "sets": 3, "reps": "8-12"},
-            {"name": "Leg Curls", "sets": 3, "reps": "8-12"},
-            {"name": "Calf Raises", "sets": 5, "reps": "8-12"},
-        ]
-    }
+    workout_program = get_workout_program("pull_push_legs")
     return render_template('pull_push_legs.html', workout_program=workout_program)
 
 @app.route('/upper_lower')
 def upper_lower():
-    return render_template('upper_lower.html')
+    workout_program = get_workout_program("upper_lower")
+    return render_template('upper_lower.html', workout_program=workout_program)
 
 
 
