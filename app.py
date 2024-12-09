@@ -328,6 +328,10 @@ def pull_push_legs():
     }
     return render_template('pull_push_legs.html', workout_program=workout_program)
 
+@app.route('/upper_lower')
+def upper_lower():
+    return render_template('upper_lower.html')
+
 
 
 
