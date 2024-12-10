@@ -5,24 +5,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Workout Calendar</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .workout-day {
+            background-color: #28a745 !important; /* Green background */
+            color: white !important; /* White text */
+        }
+    </style>
     <script>
         function openDayWorkout(element) {
-            // Get year, month, and day from data attributes
             const year = element.getAttribute('data-year');
             const month = element.getAttribute('data-month');
             const day = element.getAttribute('data-day');
-            
-            // Log values for debugging
-            console.log('Year:', year);
-            console.log('Month:', month);
-            console.log('Day:', day);
-    
-            // Redirect to the day-specific workout history page with the correct year, month, and day
             window.location.href = `/history/${year}/${month}/${day}`;
         }
     
         function navigateCalendar(year, month) {
-            // Redirect to the calendar page with updated year and month
             window.location.href = `/calendar?year=${year}&month=${month}`;
         }
     </script>       
@@ -63,7 +60,7 @@
                                     <td></td>
                                 {% else %}
                                 <td class="text-center">
-                                    <button class="btn btn-outline-primary btn-sm" 
+                                    <button class="btn {% if day in workout_days %}workout-day{% else %}btn-outline-primary{% endif %} btn-sm" 
                                             data-year="{{ current_year }}" 
                                             data-month="{{ current_month_number }}" 
                                             data-day="{{ day }}"

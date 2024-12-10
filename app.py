@@ -252,6 +252,22 @@ def workout_calendar():
     cal = calendar.Calendar(firstweekday=6)  # Sunday as the first day of the week
     calendar_data = cal.monthdayscalendar(year, month)
 
+    # Fetch workout dates for the user
+    conn = get_db_connection()
+    result = conn.execute(
+        '''
+        SELECT DISTINCT date FROM workouts 
+        WHERE user_id = ? AND strftime('%Y', date) = ? AND strftime('%m', date) = ?
+        ''',
+        (session.get('user_id'), str(year), f'{month:02}')
+    ).fetchall()
+    conn.close()
+
+    # Extract just the day numbers from the result, accounting for time format
+    workout_days = {
+        int(row['date'].split(' ')[0].split('-')[2]) for row in result
+    }
+
     return render_template(
         'calendar.html',
         calendar=calendar_data,   # Aligned calendar data
@@ -262,6 +278,7 @@ def workout_calendar():
         prev_year=year if month > 1 else year - 1,
         next_month=month + 1 if month < 12 else 1,
         next_year=year if month < 12 else year + 1,
+        workout_days=workout_days  # Days with workouts
     )
 
 
