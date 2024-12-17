@@ -51,6 +51,26 @@ def get_workout_program(program_type=None):
                 {"name": "Leg Curls", "sets": 3, "reps": "10-12"},
             ],
         },
+        "full_body": {
+            "Workout A": [
+                {"name": "Squats", "sets": 3, "reps": "6-8"},
+                {"name": "Bench Press", "sets": 3, "reps": "6-8"},
+                {"name": "Lat Pull-Downs", "sets": 3, "reps": "8-10"},
+                {"name": "Shoulder Press", "sets": 3, "reps": "8-10"},
+                {"name": "Leg Curls", "sets": 3, "reps": "8-10"},
+                {"name": "Biceps Curls", "sets": 3, "reps": "10-15"},
+                {"name": "Face Pulls", "sets": 3, "reps": "10-15"},
+            ],
+            "Workout B": [
+                {"name": "Romanian Deadlift", "sets": 3, "reps": "6-8"},
+                {"name": "Seated Cable Rows", "sets": 3, "reps": "6-8"},
+                {"name": "Incline Dumbbell Press", "sets": 3, "reps": "8-10"},
+                {"name": "Leg Press", "sets": 3, "reps": "10-12"},
+                {"name": "Lateral Raises", "sets": 3, "reps": "10-15"},
+                {"name": "Triceps Pushdowns", "sets": 3, "reps": "10-15"},
+                {"name": "Standing Calf Raises", "sets": 4, "reps": "6-10"},
+            ],
+        }
     }
     return programs.get(program_type, {})
 
@@ -165,6 +185,8 @@ def workout_form(workout_type):
         workout_program = get_workout_program("pull_push_legs")
     elif workout_type in get_workout_program("upper_lower"):
         workout_program = get_workout_program("upper_lower")
+    elif workout_type in get_workout_program("full_body"):
+        workout_program = get_workout_program("full_body")
 
     # Fetch the exercises for the specific workout type
     exercises = workout_program.get(workout_type, [])
@@ -324,7 +346,10 @@ def upper_lower():
     workout_program = get_workout_program("upper_lower")
     return render_template('upper_lower.html', workout_program=workout_program)
 
-
+@app.route('/full_body')
+def full_body():
+    workout_program = get_workout_program("full_body")
+    return render_template('full_body.html', workout_program=workout_program)
 
 
 if __name__ == '__main__':

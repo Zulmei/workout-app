@@ -11,7 +11,7 @@
         <h1 class="text-center mb-4">Choose Your Workout Split</h1>
 
         <!-- Workout split options -->
-        <div class="row">
+        <div class="row">          
             <div class="col-md-6 mb-4">
                 <div class="card" style="background-color: #CDD2FF;">
                     <div class="card-header text-center" style="background-color: #CDD2FF;">
@@ -37,6 +37,20 @@
                     </div>
                     <div class="card-footer text-center" style="background-color: #CDD2FF;">
                         <a href="{{ url_for('upper_lower') }}" class="btn btn-primary">Select</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 mb-4">
+                <div class="card" style="background-color: #CDD2FF;">
+                    <div class="card-header text-center" style="background-color: #CDD2FF;">
+                        <h5>Full Body Split</h5>
+                    </div>
+                    <div class="card-body text-center" style="background-color: #E6E6FA;">
+                        <img src="{{ url_for('static', filename='images/full_body.jpg') }}" class="img-fluid mb-3" alt="Full Body Split">
+                        <p>Select this split to work your entire body in each workout session.</p>
+                    </div>
+                    <div class="card-footer text-center" style="background-color: #CDD2FF;">
+                        <a href="{{ url_for('full_body') }}" class="btn btn-primary">Select</a>
                     </div>
                 </div>
             </div>
