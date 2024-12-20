@@ -1,9 +1,10 @@
 from flask import Flask, render_template, request, redirect, url_for, session, flash
-import sqlite3
+from flask_pymongo import PyMongo
 from datetime import datetime, timedelta
 from werkzeug.security import generate_password_hash, check_password_hash
 import os
 import calendar
+from bson import ObjectId
 
 # Initialize Flask app
 app = Flask(__name__, static_folder='static', static_url_path='/static')
@@ -74,45 +75,12 @@ def get_workout_program(program_type=None):
     }
     return programs.get(program_type, {})
 
-# Database connection function
-def get_db_connection():
-    db_path = os.path.join(os.path.dirname(__file__), 'workout.db')
-    conn = sqlite3.connect(db_path)
-    conn.row_factory = sqlite3.Row
-    return conn
+app = Flask(__name__, static_folder='static', static_url_path='/static')
+app.secret_key = 'your_secret_key'
 
-def init_db():
-    """Initializes the database with required tables if not already created."""
-    conn = get_db_connection()
-    cursor = conn.cursor()
-
-    # Create users table
-    cursor.execute('''
-    CREATE TABLE IF NOT EXISTS users (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        username TEXT NOT NULL UNIQUE,
-        password TEXT NOT NULL
-    )
-    ''')
-
-    # Create workouts table
-    cursor.execute('''
-    CREATE TABLE IF NOT EXISTS workouts (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        user_id INTEGER NOT NULL,
-        workout_type TEXT NOT NULL,
-        exercise_name TEXT NOT NULL,
-        sets INTEGER NOT NULL,
-        reps INTEGER NOT NULL,
-        weight REAL NOT NULL,
-        date TEXT NOT NULL,
-        FOREIGN KEY (user_id) REFERENCES users (id)
-    )
-    ''')
-
-    conn.commit()
-    conn.close()
-    print("Database initialized successfully.")
+# MongoDB Configuration
+app.config["MONGO_URI"] = "mongodb+srv://Zulmei:OiQVj32iu0@workouttrackercluster.7m2oj.mongodb.net/workout_tracker?retryWrites=true&w=majority&appName=WorkoutTrackerCluster"
+mongo = PyMongo(app)
 
 
 @app.route('/')
@@ -125,21 +93,22 @@ def register():
         username = request.form['username']
         password = request.form['password']
 
-        conn = get_db_connection()
-        existing_user = conn.execute('SELECT * FROM users WHERE username = ?', (username,)).fetchone()
-        
-        if existing_user:
+        # Check if the username already exists
+        if mongo.db.users.find_one({"username": username}):
             flash('Username already taken!', 'danger')
-            conn.close()
             return redirect(url_for('register'))
 
         hashed_password = generate_password_hash(password)
-        conn.execute('INSERT INTO users (username, password) VALUES (?, ?)', (username, hashed_password))
-        conn.commit()
-        conn.close()
 
-        flash('Registration successful. Please log in.', 'success')
-        return redirect(url_for('login'))
+        # Add error handling for the insert operation
+        try:
+            mongo.db.users.insert_one({"username": username, "password": hashed_password})
+            flash('Registration successful. Please log in.', 'success')
+            return redirect(url_for('login'))
+        except Exception as e:
+            flash(f'An error occurred during registration: {e}', 'danger')
+            return redirect(url_for('register'))
+
     return render_template('register.html')
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -148,12 +117,10 @@ def login():
         username = request.form['username']
         password = request.form['password']
 
-        conn = get_db_connection()
-        user = conn.execute('SELECT * FROM users WHERE username = ?', (username,)).fetchone()
-        conn.close()
+        user = mongo.db.users.find_one({"username": username})
 
         if user and check_password_hash(user['password'], password):
-            session['user_id'] = user['id']
+            session['user_id'] = str(user['_id'])
             session['username'] = user['username']
             flash('Login successful!', 'success')
             return redirect(url_for('index'))
@@ -203,31 +170,32 @@ def submit_workout():
     user_id = session['user_id']
     workout_type = request.form['workout_type']
     exercises = request.form.to_dict()
-    
-    conn = get_db_connection()
-    for key, value in exercises.items():
-        if key.endswith("_reps"):
-            # Extract exercise name and set number
-            base_key = key.replace("_reps", "")
-            exercise_name, set_number = base_key.rsplit("_set_", 1)  # Split at the last occurrence of "_set_"
-            reps = value
-            # Get the corresponding weight for this set
-            weight_key = f"{exercise_name}_set_{set_number}_weight"
-            weight = exercises.get(weight_key, 0)
-            
-            conn.execute(
-                '''
-                INSERT INTO workouts (user_id, workout_type, exercise_name, sets, reps, weight, date) 
-                VALUES (?, ?, ?, ?, ?, ?, ?)
-                ''',
-                (user_id, workout_type, exercise_name, int(set_number), int(reps), float(weight), datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
-            )
-    conn.commit()
-    conn.close()
 
-    flash('Workout submitted successfully!', 'success')
-    return redirect(url_for('index'))
+    try:
+        for key, value in exercises.items():
+            if key.endswith("_reps"):
+                base_key = key.replace("_reps", "")
+                exercise_name, set_number = base_key.rsplit("_set_", 1)
+                reps = int(value)
+                weight_key = f"{exercise_name}_set_{set_number}_weight"
+                weight = float(exercises.get(weight_key, 0))
 
+                mongo.db.workouts.insert_one({
+                    "user_id": user_id,
+                    "workout_type": workout_type,
+                    "exercise_name": exercise_name,
+                    "sets": int(set_number),
+                    "reps": reps,
+                    "weight": weight,
+                    "date": datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+                })
+
+        flash('Workout submitted successfully!', 'success')
+        return redirect(url_for('index'))
+
+    except Exception as e:
+        flash(f'An error occurred while submitting the workout: {e}', 'danger')
+        return redirect(url_for('workout_form', workout_type=workout_type))
 
 @app.route('/history')
 def workout_history():
@@ -235,17 +203,20 @@ def workout_history():
         return redirect(url_for('login'))
 
     user_id = session['user_id']
-    conn = get_db_connection()
-    workout_data = conn.execute(
-        '''
-        SELECT workout_type, exercise_name, sets, reps, weight, date 
-        FROM workouts 
-        WHERE user_id = ?
-        ORDER BY date DESC
-        ''',
-        (user_id,)
-    ).fetchall()
-    conn.close()
+    workouts = mongo.db.workouts.find({"user_id": user_id}).sort("date", -1)
+
+    # Convert MongoDB cursor to a list of dictionaries
+    workout_data = [
+        {
+            "workout_type": workout["workout_type"],
+            "exercise_name": workout["exercise_name"],
+            "sets": workout["sets"],
+            "reps": workout["reps"],
+            "weight": workout["weight"],
+            "date": workout["date"]
+        }
+        for workout in workouts
+    ]
 
     return render_template('trends.html', workout_data=workout_data)
 
@@ -274,21 +245,16 @@ def workout_calendar():
     cal = calendar.Calendar(firstweekday=6)  # Sunday as the first day of the week
     calendar_data = cal.monthdayscalendar(year, month)
 
-    # Fetch workout dates for the user
-    conn = get_db_connection()
-    result = conn.execute(
-        '''
-        SELECT DISTINCT date FROM workouts 
-        WHERE user_id = ? AND strftime('%Y', date) = ? AND strftime('%m', date) = ?
-        ''',
-        (session.get('user_id'), str(year), f'{month:02}')
-    ).fetchall()
-    conn.close()
+    user_id = session.get('user_id')
+    workouts = mongo.db.workouts.find({
+        "user_id": user_id,
+        "date": {
+            "$regex": f"^{year}-{month:02d}-"  # Matches dates starting with YYYY-MM-
+        }
+    })
 
-    # Extract just the day numbers from the result, accounting for time format
-    workout_days = {
-        int(row['date'].split(' ')[0].split('-')[2]) for row in result
-    }
+    # Extract just the day numbers from the result
+    workout_days = {int(workout['date'].split(' ')[0].split('-')[2]) for workout in workouts}
 
     return render_template(
         'calendar.html',
@@ -312,16 +278,24 @@ def workout_history_day(year, month, day):
     user_id = session['user_id']
     date_str = f"{year}-{month:02d}-{day:02d}"
 
-    conn = get_db_connection()
-    workout_data = conn.execute(
-        '''
-        SELECT workout_type, exercise_name, sets, reps, weight, date 
-        FROM workouts 
-        WHERE user_id = ? AND date(date) = ?
-        ''',
-        (user_id, date_str)
-    ).fetchall()
-    conn.close()
+    # Fetch workouts for the given user and date
+    workouts = mongo.db.workouts.find({
+        "user_id": user_id,
+        "date": {"$regex": f"^{date_str}"}
+    })
+
+    # Convert MongoDB cursor to a list of dictionaries
+    workout_data = [
+        {
+            "workout_type": workout["workout_type"],
+            "exercise_name": workout["exercise_name"],
+            "sets": workout["sets"],
+            "reps": workout["reps"],
+            "weight": workout["weight"],
+            "date": workout["date"]
+        }
+        for workout in workouts
+    ]
 
     return render_template('history_day.html', workout_data=workout_data, date=date_str)
 
@@ -353,5 +327,4 @@ def full_body():
 
 
 if __name__ == '__main__':
-    init_db()  # Initialize the database before starting the app
     app.run(debug=True)
